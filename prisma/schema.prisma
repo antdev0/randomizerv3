@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+
+model user {
+  id            String       @id @default(cuid())
+  username      String       @unique
+  password      String
+  token         String?       @unique  
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @default(now()) @updatedAt
+
+  prize_lists   prize_list[]  // 1-to-many relation
+  participants  participant[]
+  winners       winner[]
+}
+
+model prize_list {
+  id          String   @id @default(cuid())
+  name        String
+  type        String
+  image       String
+  quantity    Int
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @default(now()) @updatedAt
+
+  user_id     String
+  user        user     @relation(fields: [user_id], references: [id])
+  winners     winner[]
+}
+
+model participant {
+  id              String    @id @default(cuid())
+  name            String
+  company         String
+  entries         Int
+  type            String
+  user_id         String
+  created_at      DateTime     @default(now())
+  updated_at      DateTime     @default(now()) @updatedAt
+
+  user            user      @relation(fields: [user_id], references: [id])
+  winners         winner[]
+}
+
+model winner {
+  id             String    @id @default(cuid())
+  participant_id String
+  prize_list_id  String
+  user_id        String
+  type           String
+  created_at    DateTime     @default(now())
+  updated_at    DateTime     @default(now()) @updatedAt
+
+  user           user       @relation(fields: [user_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  prize_list     prize_list @relation(fields: [prize_list_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  participant    participant @relation(fields: [participant_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
+}
