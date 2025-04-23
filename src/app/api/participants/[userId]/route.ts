@@ -13,7 +13,7 @@ const participantSchema = z.object({
 });
 
 
-export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
         const { userId } = await params;
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
 }
 
 
-export async function POST(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
         const body = await request.json();
         const { userId } = await params;
@@ -79,7 +79,7 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
                     entries: existingParticipant.entries + entries,
                 },
             });
-            return NextResponse.json({newEntry: existingParticipant.entries + entries}, {status: 200});
+            return NextResponse.json({participantId: existingParticipant.id, newEntry: existingParticipant.entries + entries}, {status: 200});
         }
 
         // Create the new participant

@@ -3,6 +3,7 @@
 
 import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { AuthService } from '@services/AuthService';
+import toast from 'react-hot-toast';
 
 type AuthContextType = {
     authLoading: boolean;
@@ -31,6 +32,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
                 setUser(res.data.user);
             } catch (error) {
                 setUser(null);
+                toast.error('Unauthenticated');
                 console.error(error);
             } finally {
                 setAuthLoading(false);

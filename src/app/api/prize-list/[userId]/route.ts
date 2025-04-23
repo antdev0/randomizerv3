@@ -13,7 +13,7 @@ const prizeListSchema = z.object({
 });
 
 
-export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ userId: string }> } ) {
     try {
         const { userId } = await params;
 
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
 }
 
 
-export async function POST(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
         const body = await request.json();
         const { userId } = await params;

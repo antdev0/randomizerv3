@@ -12,7 +12,7 @@ const winnerSchema = z.object({
 });
 
 
-export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
         const { userId } = await params;
 
@@ -37,7 +37,7 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
     }
 }
 
-export async function POST(request: NextRequest, { params }: { params: { userId: string } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
         const over_all_chance_to_be_selected = 1;
         const chance_to_be_selected_in_major = 1;

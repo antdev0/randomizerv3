@@ -29,6 +29,15 @@
       "@app/*": [
         "./src/app/*"
       ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
+      "@hooks/*": [
+        "./src/hooks/*"
+      ],
+      "@features/*": [
+        "./src/features/*"
+      ],
       "@services/*": [
         "./src/services/*"
       ],
