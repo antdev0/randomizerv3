@@ -33,7 +33,7 @@ model prize_list {
   id          String   @id @default(cuid())
   name        String
   type        String
-  image       String
+  image       String @db.NVarChar(MAX)
   quantity    Int
   created_at  DateTime     @default(now())
   updated_at  DateTime     @default(now()) @updatedAt
@@ -54,12 +54,13 @@ model participant {
   updated_at      DateTime     @default(now()) @updatedAt
 
   user            user      @relation(fields: [user_id], references: [id])
-  winners         winner[]
+
 }
 
 model winner {
   id             String    @id @default(cuid())
-  participant_id String
+  company        String
+  name           String
   prize_list_id  String
   user_id        String
   type           String
@@ -68,5 +69,5 @@ model winner {
 
   user           user       @relation(fields: [user_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
   prize_list     prize_list @relation(fields: [prize_list_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  participant    participant @relation(fields: [participant_id], references: [id], onUpdate: NoAction, onDelete: NoAction)
+
 }

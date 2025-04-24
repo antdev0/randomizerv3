@@ -2,6 +2,7 @@
 import Navigation from "@features/game-content/components/Navigation";
 import { useNavigation } from "@features/game-content/hooks/useNavigation";
 import Participants from "@features/game-content/components/Participants";
+import Prizes from "@features/game-content/components/Prizes";
 const ContentViewer = () => {
     const { selectedTab, setSelectedTab } = useNavigation();
     return (
@@ -13,7 +14,7 @@ const ContentViewer = () => {
             }
 
             {
-                selectedTab === "prizes" && "prizes"
+                selectedTab === "prizes" && <Prizes />
             }
 
             {

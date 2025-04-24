@@ -1,10 +1,21 @@
-import { useAppContext, Participants } from "@store/AppContext";
+import { useAppContext } from "@store/AppContext";
+import { ParticipantsService } from "@services/ParticipantsService";
+import { useAuthContext } from "@/store/AuthContext";
+import toast from "react-hot-toast";
+
+export interface Participant {
+    name: string;
+    company: string;
+    entries: number;
+    type: string
+}
 
 
 export const useParticipants = () => {
-    const { activeParticipants, setActiveParticipants } = useAppContext();
+    const { user } = useAuthContext();
+    const { activeParticipants, setActiveParticipants, fetchParticipants } = useAppContext();
 
-    const handleAddLocalParticipants = (payload: Participants) => {
+    const handleAddLocalParticipants = (payload: Record<string, string | number>[]) => {
         setActiveParticipants([...activeParticipants, ...payload]);
     }
 
@@ -17,8 +28,18 @@ export const useParticipants = () => {
         }));
     }
 
+    const handleBatchInsertParticipants = async (participants: Participant[]) => {
+        if (user) {
+            const res = await ParticipantsService.batchInsertParticipants({ userId: user.id, participants })
+            if (res.status === 201) {
+                toast.success("Participants added successfully");
+                fetchParticipants();
+            }
+        }
+    }
 
-    return { activeParticipants, handleAddLocalParticipants, updateExistingParticipant };
+
+    return { activeParticipants, handleAddLocalParticipants, updateExistingParticipant, handleBatchInsertParticipants };
 }
 
 export default useParticipants;

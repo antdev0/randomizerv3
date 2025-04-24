@@ -37,6 +37,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     }
 }
 
+
+
+
 export async function POST(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
         const over_all_chance_to_be_selected = 1;
@@ -53,46 +56,58 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
         const { type, participant_id, prize_list_id } = parsed.data;
 
-        // ✅ 1. Record the winner first
+        // Step 1: Record the winner first
+        const participant = await prisma.participant.findUnique({ where: { id: participant_id } });
+
+        if (!participant) {
+            return NextResponse.json({ message: 'Participant not found' }, { status: 404 });
+        }
+
+        const { name, company } = participant;
+
+        // Record the winner first
         const winner = await prisma.winner.create({
             data: {
                 type,
-                participant_id,
                 prize_list_id,
                 user_id: userId,
-            },
+                name,
+                company,
+            }
         });
 
-        // ✅ 2. Count total wins for this participant
+        // Step 2: Count how many wins this participant (name+company) has
         const totalCount = await prisma.winner.count({
-            where: {
-                participant_id,
-                user_id: userId,
-            },
+            where: { name, company, user_id: userId },
         });
 
-        // ✅ 3. If reached max overall, set entries to 0
-        if (totalCount >= over_all_chance_to_be_selected) {
-            await prisma.participant.update({
-                where: { id: participant_id },
+        // Step 3: Check if they reached the overall limit
+        if (totalCount > over_all_chance_to_be_selected) {
+            // Disqualify this participant by setting all their entries to 0
+            await prisma.participant.updateMany({
+                where: { name, company, user_id: userId },
                 data: { entries: 0 },
             });
+
             return NextResponse.json(
                 {
-                    message: 'Participant reached overall limit. Entry set to 0.',
-                    participant_id: participant_id,
+                    message: 'Participant reached overall limit. Entries set to 0 for all records.',
+                    name,
+                    company,
                     entries: 0,
-                    type: "all"
+                    type: "all",
+                    status: "reached"
                 },
-                { status: 200 });
+                { status: 200 }
+            );
         }
 
-        // ✅ 4. Check type-specific count
+        // Step 4: Check if they reached the type-specific limit (major/minor)
         const typeCount = await prisma.winner.count({
             where: {
-                participant_id,
+                name,
+                company,
                 user_id: userId,
-
                 type,
             },
         });
@@ -100,21 +115,26 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
         const typeLimit =
             type === 'major' ? chance_to_be_selected_in_major : chance_to_be_selected_in_minor;
 
-        if (typeCount >= typeLimit) {
+        if (typeCount > typeLimit) {
+            // Disqualify this participant for the current type only by setting their entries to 0
             await prisma.participant.update({
                 where: { id: participant_id },
                 data: { entries: 0 },
             });
+
             return NextResponse.json(
                 {
                     message: `Participant reached ${type} limit. Entry set to 0.`,
-                    participant_id: participant_id,
-                    type: type,
+                    participant_id,
+                    type,
                     entries: 0,
+                    status: "reached"
                 },
-                { status: 200 });
+                { status: 200 }
+            );
         }
 
+        // Step 5: Return success response if no limit was reached
         return NextResponse.json(winner, { status: 201 });
 
     } catch (error) {

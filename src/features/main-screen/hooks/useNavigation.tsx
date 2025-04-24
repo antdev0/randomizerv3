@@ -1,10 +1,11 @@
-import { useAppContext } from "@store/AppContext";
+import { useAppContext, GameType } from "@store/AppContext";
 
 
 export const useNavigation = () => {
     const {
         setIsFullScreen, isFullScreen,
-        selectedGame, setSelectedGame
+        selectedGame, setSelectedGame,
+        setSelectedPrize
     } = useAppContext();
 
 
@@ -12,8 +13,9 @@ export const useNavigation = () => {
         setIsFullScreen(!isFullScreen);
     };
 
-    const changeSelectedGame = (game: string) => {
+    const changeSelectedGame = (game: GameType) => {
         setSelectedGame(game);
+        setSelectedPrize(null);
     };
 
     return { toggleFullScreen, isFullScreen, selectedGame, changeSelectedGame  };
