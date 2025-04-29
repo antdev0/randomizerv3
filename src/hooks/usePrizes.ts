@@ -11,7 +11,9 @@ import { useModalContext } from "@store/ModalContext";
 export const usePrizes = () => {
     const { closeModal } = useModalContext();
     const { user } = useAuthContext();
-    const { activePrizes, setActivePrizes, selectedGame, fetchPrizes, setSelectedPrize } = useAppContext();
+
+
+    const { forCmsPrizes, selectedGame, fetchPrizes, setSelectedPrize, activePrizes } = useAppContext();
     const [loading, setLoading] = useState(false);
 
 
@@ -23,16 +25,9 @@ export const usePrizes = () => {
 
         try {
             setLoading(true);
-            const res = await PrizesService.addPrize({ userId: user.id, prize: payload });
+            await PrizesService.addPrize({ userId: user.id, prize: payload });
 
-            if (res.status === 201) {
-
-                setActivePrizes([...activePrizes, res.data]);
-            } else if (res.status === 200) {
-
-                fetchPrizes();
-
-            }
+            fetchPrizes();
             closeModal();
             toast.success("Prize added successfully!");
         } catch (error) {
@@ -42,6 +37,8 @@ export const usePrizes = () => {
             setLoading(false);
         }
     };
+
+  
 
     const handleUpdatePrize = async (payload: Record<string, string | number>) => {
         if (!user) {
@@ -92,7 +89,7 @@ export const usePrizes = () => {
         }
     }
 
-    return { activePrizes, handleAddPrize, loading, selectedGame, handleDeletePrize, handleUpdatePrize };
+    return { activePrizes, forCmsPrizes, handleAddPrize, loading, selectedGame, handleDeletePrize, handleUpdatePrize };
 }
 
 export default usePrizes;

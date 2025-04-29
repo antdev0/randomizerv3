@@ -7,16 +7,17 @@ import Icon from "@components/Icon";
 
 const Prizes = () => {
     const { openModal } = useModalContext();
-    const { handleAddPrize, loading, selectedGame, activePrizes, handleDeletePrize, handleUpdatePrize } = usePrizes();
+    
+    const { handleAddPrize, loading, selectedGame, forCmsPrizes, handleDeletePrize, handleUpdatePrize } = usePrizes();
 
     return (
         <div className="relative h-[calc(100vh-6.7rem)] w-full flex flex-col gap-5 overflow-y-auto py-2">
-            <button onClick={() => openModal("addPrizeModal", { handleAddPrize, loading, selectedGame })} className="mt-3 cursor-pointer px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 w-full">Add Prize</button>
+            <button onClick={() => openModal("addPrizeModal", { handleAddPrize, loading, selectedGame })} className="mt-3 cursor-pointer px-4 py-2 border border-white/30 text-white rounded  w-full">Add Prize</button>
 
             <div className="flex flex-col gap-2 border border-white/30 rounded-lg px-3 py-2 max-h-[80vh] overflow-scroll">
                 {
-                    activePrizes.length === 0 ? <div className="text-white">No items added yet</div> : (
-                        activePrizes.map((prize, index) => (
+                    forCmsPrizes.length === 0 ? <div className="text-white">No items added yet</div> : (
+                        forCmsPrizes.map((prize, index) => (
                             <div key={index} className=" flex items-center justify-between gap-3 p-2 rounded-lg hover:bg-gray-50/10 transition text-white">
                                 <div className="flex gap-5">
                                     <div className="aspect-square w-[70px] shrink-0  rounded-lg overflow-hidden relative">

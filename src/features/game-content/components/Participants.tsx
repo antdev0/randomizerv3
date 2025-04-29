@@ -32,7 +32,7 @@ const Participants = () => {
                 />
                 <label
                     htmlFor="file-upload"
-                    className="cursor-pointer px-4 py-2 bg-gray-700 text-white rounded hover:bg-gray-600 w-full"
+                    className="cursor-pointer px-4 py-2  text-white rounded border border-white/30 w-full"
                 >
                     {fileName || "No file selected"}
                 </label>

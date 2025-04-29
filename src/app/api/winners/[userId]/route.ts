@@ -56,44 +56,95 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
         const { type, participant_id, prize_list_id } = parsed.data;
 
-        // Step 1: Record the winner first
-        const participant = await prisma.participant.findUnique({ where: { id: participant_id } });
+        const result = await prisma.$transaction(async (tx) => {
+            // Step 1: Record the winner first
+            const participant = await tx.participant.findUnique({ where: { id: participant_id } });
 
-        if (!participant) {
-            return NextResponse.json({ message: 'Participant not found' }, { status: 404 });
-        }
-
-        const { name, company } = participant;
-
-        // Record the winner first
-        const winner = await prisma.winner.create({
-            data: {
-                type,
-                prize_list_id,
-                user_id: userId,
-                name,
-                company,
+            if (!participant) {
+                throw new Error('Participant not found');
             }
-        });
 
-        // Step 2: Count how many wins this participant (name+company) has
-        const totalCount = await prisma.winner.count({
-            where: { name, company, user_id: userId },
-        });
+            const { name, company } = participant;
 
-        // Step 3: Check if they reached the overall limit
-        if (totalCount > over_all_chance_to_be_selected) {
-            // Disqualify this participant by setting all their entries to 0
-            await prisma.participant.updateMany({
-                where: { name, company, user_id: userId },
-                data: { entries: 0 },
+            // Record the winner
+            const winner = await tx.winner.create({
+                data: {
+                    type,
+                    prize_list_id,
+                    user_id: userId,
+                    name,
+                    company,
+                }
             });
 
+            const existingPrizeList = await tx.prize_list.findFirst({
+                where: { id: prize_list_id }
+            });
+
+            if (!existingPrizeList) {
+                throw new Error('Prize list not found');
+            }
+
+            if (existingPrizeList) {
+                await tx.prize_list.update({
+                    where: { id: existingPrizeList.id },
+                    data: {
+                        quantity: existingPrizeList.quantity - 1,
+                    },
+                });
+            }
+
+            // Step 2: Count how many wins this participant has
+            const totalCount = await tx.winner.count({
+                where: { name, company, user_id: userId },
+            });
+
+            // Step 3: Check overall limit
+            if (totalCount >= over_all_chance_to_be_selected) {
+                await tx.participant.updateMany({
+                    where: { name, company, user_id: userId },
+                    data: { entries: 0 },
+                });
+
+                return {
+                    status: 'overall_limit_reached',
+                    name,
+                    company,
+                };
+            }
+
+            // Step 4: Check type-specific limit (major/minor)
+            const typeCount = await tx.winner.count({
+                where: { name, company, user_id: userId, type },
+            });
+
+            const typeLimit =
+                type === 'major' ? chance_to_be_selected_in_major : chance_to_be_selected_in_minor;
+
+            if (typeCount >= typeLimit) {
+                await tx.participant.update({
+                    where: { id: participant_id },
+                    data: { entries: 0 },
+                });
+
+                return {
+                    status: 'type_limit_reached',
+                    participant_id,
+                    type,
+                };
+            }
+
+            // Step 5: Success if no limits reached
+            return { status: 'success', winner };
+        });
+
+        // Now handle what was returned
+        if (result.status === 'overall_limit_reached') {
             return NextResponse.json(
                 {
                     message: 'Participant reached overall limit. Entries set to 0 for all records.',
-                    name,
-                    company,
+                    name: result.name,
+                    company: result.company,
                     entries: 0,
                     type: "all",
                     status: "reached"
@@ -102,31 +153,12 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             );
         }
 
-        // Step 4: Check if they reached the type-specific limit (major/minor)
-        const typeCount = await prisma.winner.count({
-            where: {
-                name,
-                company,
-                user_id: userId,
-                type,
-            },
-        });
-
-        const typeLimit =
-            type === 'major' ? chance_to_be_selected_in_major : chance_to_be_selected_in_minor;
-
-        if (typeCount > typeLimit) {
-            // Disqualify this participant for the current type only by setting their entries to 0
-            await prisma.participant.update({
-                where: { id: participant_id },
-                data: { entries: 0 },
-            });
-
+        if (result.status === 'type_limit_reached') {
             return NextResponse.json(
                 {
-                    message: `Participant reached ${type} limit. Entry set to 0.`,
-                    participant_id,
-                    type,
+                    message: `Participant reached ${result.type} limit. Entry set to 0.`,
+                    participant_id: result.participant_id,
+                    type: result.type,
                     entries: 0,
                     status: "reached"
                 },
@@ -134,8 +166,8 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
             );
         }
 
-        // Step 5: Return success response if no limit was reached
-        return NextResponse.json(winner, { status: 201 });
+        // If success
+        return NextResponse.json(result.winner, { status: 201 });
 
     } catch (error) {
         console.error(error);

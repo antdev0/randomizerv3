@@ -13,20 +13,10 @@ export interface Participant {
 
 export const useParticipants = () => {
     const { user } = useAuthContext();
-    const { activeParticipants, setActiveParticipants, fetchParticipants } = useAppContext();
+    const { activeParticipants, fetchParticipants } = useAppContext();
 
-    const handleAddLocalParticipants = (payload: Record<string, string | number>[]) => {
-        setActiveParticipants([...activeParticipants, ...payload]);
-    }
+   
 
-    const updateExistingParticipant = (participantId: string | number, newEntry: number) => {
-        setActiveParticipants(activeParticipants.map(participant => {
-            if (participant.id === participantId) {
-                return { ...participant, entries: newEntry };
-            }
-            return participant;
-        }));
-    }
 
     const handleBatchInsertParticipants = async (participants: Participant[]) => {
         if (user) {
@@ -39,7 +29,7 @@ export const useParticipants = () => {
     }
 
 
-    return { activeParticipants, handleAddLocalParticipants, updateExistingParticipant, handleBatchInsertParticipants };
+    return { activeParticipants, handleBatchInsertParticipants };
 }
 
 export default useParticipants;

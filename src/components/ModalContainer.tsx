@@ -5,6 +5,7 @@ import RaffleGameModal from "@features/main-screen/components/RaffleGameModal";
 import AddPrizeModal from "@features/game-content/components/AddPrizeModal";
 import DeletePrizeModal from "@features/game-content/components/DeletePrizeModal";
 import EditPrizeModal from "@features/game-content/components/EditPrizeModal";
+import WinnerModal from "@features/main-screen/components/WinnerModal";
 
 const ModalContainer = () => {
     const { activeModal } = useModalContext();
@@ -15,6 +16,7 @@ const ModalContainer = () => {
         addPrizeModal: <AddPrizeModal isOpen={activeModal === "addPrizeModal"} />,
         deletePrizeModal: <DeletePrizeModal isOpen={activeModal === "deletePrizeModal"} />,
         editPrizeModal: <EditPrizeModal isOpen={activeModal === "editPrizeModal"} />,
+        winnerModal: <WinnerModal isOpen={activeModal === "winnerModal"} />,
     };
 
 

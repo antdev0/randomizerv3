@@ -1,4 +1,5 @@
-import { useAppContext, GameType } from "@store/AppContext";
+import { useAppContext } from "@store/AppContext";
+import { GameType } from "@/types/game";
 
 
 export const useNavigation = () => {

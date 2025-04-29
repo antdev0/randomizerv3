@@ -1,1 +1,1 @@
-export type Payload = Record<string, string | string[] | boolean>
+export type Payload = Record<string, string | string[] | boolean | number>

@@ -8,18 +8,15 @@ import {
     useCallback,
     ReactNode,
 } from "react";
+
+
+
 import { useAuthContext } from "@store/AuthContext";
 import { ParticipantsService } from "@services/ParticipantsService";
 import { PrizesService } from "@services/PrizesService";
 import logger from "@lib/logger";
+import { GameType, ParticipantsData, PrizesData, ActiveParticipantsData, ActivePrizesData } from "@/types/game";
 
-export type GameType = keyof ParticipantsData;
-export type DataGroup = Array<Record<string, string | number>>;
-
-interface ParticipantsData {
-    major: DataGroup;
-    minor: DataGroup;
-}
 
 interface AppContextType {
     isFullScreen: boolean;
@@ -28,17 +25,29 @@ interface AppContextType {
     selectedGame: GameType;
     setSelectedGame: (val: GameType) => void;
 
-    activeParticipants: DataGroup;
-    setActiveParticipants: (val: DataGroup) => void;
+    activeParticipants: ActiveParticipantsData[];
+    setActiveParticipants: (val: ActiveParticipantsData[]) => void;
 
-    activePrizes: DataGroup;
-    setActivePrizes: (val: DataGroup) => void;
+    activePrizes: ActivePrizesData[];
+    setActivePrizes: (val: ActivePrizesData[]) => void;
+
+    forCmsPrizes: ActivePrizesData[];
+    setForCmsPrizes: (val: ActivePrizesData[]) => void;
 
     fetchParticipants: () => void;
     fetchPrizes: () => void;
 
-    selectedPrize: Record<string, string | number> | null;
-    setSelectedPrize: (val: Record<string, string | number> | null) => void;
+    selectedPrize: ActivePrizesData | null;
+    setSelectedPrize: (val: ActivePrizesData | null) => void;
+
+    selectedWinner: ActiveParticipantsData | null;
+    setSelectedWinner: (val: ActiveParticipantsData | null) => void;
+
+    participantsData: ParticipantsData | null;
+    setParticipantsData: (val: ParticipantsData) => void;
+
+    prizesData: PrizesData | null;
+    setPrizesData: (val: PrizesData) => void;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -48,24 +57,40 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
 
     const [isFullScreen, setIsFullScreen] = useState(false);
     const [selectedGame, setSelectedGame] = useState<GameType>("minor");
-    const [selectedPrize, setSelectedPrize] = useState<Record<string, string | number> | null>(null);
+    const [selectedPrize, setSelectedPrize] = useState<ActivePrizesData | null>(null);
 
     const [participantsData, setParticipantsData] = useState<ParticipantsData | null>(null);
-    const [prizesData, setPrizesData] = useState<ParticipantsData | null>(null);
+    const [prizesData, setPrizesData] = useState<PrizesData | null>(null);
 
-    const [activeParticipants, setActiveParticipants] = useState<DataGroup>([]);
-    const [activePrizes, setActivePrizes] = useState<DataGroup>([]);
+    const [activeParticipants, setActiveParticipants] = useState<ActiveParticipantsData[]>([]);
+    const [activePrizes, setActivePrizes] = useState<ActivePrizesData[]>([]);
+    const [forCmsPrizes, setForCmsPrizes] = useState<ActivePrizesData[]>([]);
 
     const [gameLoading, setGameLoading] = useState(true);
 
+    const [selectedWinner, setSelectedWinner] = useState<ActiveParticipantsData | null>(null);
+
     const updateActiveData = useCallback(() => {
         if (participantsData) {
-            setActiveParticipants(participantsData[selectedGame]);
+     
+            setActiveParticipants(filterZeroEntriesParticipants(participantsData[selectedGame]));
         }
         if (prizesData) {
-            setActivePrizes(prizesData[selectedGame]);
+            setForCmsPrizes(prizesData[selectedGame]);
+            setActivePrizes(filterZeroQuantityPrizes(prizesData[selectedGame]));
         }
     }, [participantsData, prizesData, selectedGame]);
+
+
+    const filterZeroQuantityPrizes = (prizes: ActivePrizesData[]) => {
+        return prizes.filter(prize => prize.quantity > 0);
+    }
+
+    const filterZeroEntriesParticipants = (participants: ActiveParticipantsData[]) => {
+        return participants.filter(participant => participant.entries > 0);
+    }
+
+
 
     useEffect(() => {
         updateActiveData();
@@ -81,6 +106,7 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
             throw new Error("Failed to fetch participants");
         }
     }, [user]);
+
 
     const fetchPrizes = useCallback(async () => {
         if (!user) return;
@@ -124,7 +150,11 @@ export const AppProvider = ({ children }: { children: ReactNode }) => {
                 activePrizes,
                 setActivePrizes,
                 fetchPrizes,
-                selectedPrize, setSelectedPrize
+                selectedPrize, setSelectedPrize,
+                selectedWinner, setSelectedWinner,
+                participantsData, setParticipantsData,
+                prizesData, setPrizesData,
+                forCmsPrizes, setForCmsPrizes
             }}
         >
             {children}
