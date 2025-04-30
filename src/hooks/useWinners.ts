@@ -5,9 +5,10 @@ import { ParticipantsData, PrizesData } from "@/types/game";
 
 
 export const useWinners = () => {
-
+    
     const { participantsData, setParticipantsData, prizesData, setPrizesData, setSelectedPrize, selectedPrize } = useAppContext();
 
+   
 
     const setAllRecordsToZero = (name: string, company: string) => {
         if (participantsData) {

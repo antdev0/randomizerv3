@@ -3,6 +3,9 @@ import Navigation from "@features/game-content/components/Navigation";
 import { useNavigation } from "@features/game-content/hooks/useNavigation";
 import Participants from "@features/game-content/components/Participants";
 import Prizes from "@features/game-content/components/Prizes";
+import WinnersTab from "@features/game-content/components/WinnersTab";
+
+
 const ContentViewer = () => {
     const { selectedTab, setSelectedTab } = useNavigation();
     return (
@@ -18,7 +21,7 @@ const ContentViewer = () => {
             }
 
             {
-                selectedTab === "winners" && "winners"
+                selectedTab === "winners" && <WinnersTab />
             }
         </div>
     );

@@ -3,21 +3,22 @@ import Navigation from "@features/main-screen/components/Navigation";
 import VSTECSWhite from "@assets/logos/vstecs_white.png"
 import ICTSummit from "@assets/logos/ict_summit_colored.png"
 import Image from "next/image";
+
 import Icon from "@components/Icon";
 import { useAppContext } from "@store/AppContext";
 import RandomText from "@features/main-screen/components/RandomText"
 
 
 const RandomizerViewer = () => {
-    const { isFullScreen } = useAppContext();
-
+    const { isFullScreen, setIsFullScreen } = useAppContext();
+ 
 
 
 
     return (
         <div className="h-full w-full p-5">
             <Navigation />
-
+      
 
             <div className=" h-[calc(100vh-5.8rem)] w-full flex flex-col items-center justify-center gap-5 overflow-y-auto py-2">
                 {
@@ -66,7 +67,7 @@ const RandomizerViewer = () => {
 
                             <RandomText />
                         </>
-                    ) : (<p className="text-white text-center">Maximize the screen using the button on top right corner</p>)
+                    ) : (<p className="text-white text-center">Maximize the screen by clicking <span className="underline cursor-pointer" onClick={() => setIsFullScreen(true)}>here</span> or the button on top right corner</p>)
                 }
             </div>
         </div>

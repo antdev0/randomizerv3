@@ -16,6 +16,13 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     try {
         const { userId } = await params;
 
+        const userInfo = await prisma.user.findMany({ where: { id: userId } });
+
+        if (!userInfo) {
+            return NextResponse.json({ message: "User not found" }, { status: 404 });
+        }
+
+
         const winners = await prisma.winner.findMany({
             where: {
                 user_id: userId,
@@ -23,6 +30,21 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                     in: ['major', 'minor'],
                 },
             },
+            select: {
+                id: true,
+                name: true,
+                company: true,
+                type: true,
+                prize_list_id: true,
+                user_id: true,
+                prize_list: {
+                    select: {
+                        id: true,
+                        name: true,
+                    }
+                }
+            }
+          
         });
 
         const allWinners = {

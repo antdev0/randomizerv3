@@ -3,10 +3,12 @@ import { useAppContext } from "@store/AppContext";
 import { useModalContext } from "@store/ModalContext";
 import { useAuthContext } from "@store/AuthContext";
 import { useWinners } from "@hooks/useWinners";
+import { useSound } from "@hooks/useSoundFx";
 
 
 
 export const useRandomizer = () => {
+    const { start, stop } = useSound();
     const { openModal } = useModalContext();
     const { user } = useAuthContext();
     const { setAllRecordsToZero, deductPrizeQuantity } = useWinners();
@@ -19,6 +21,7 @@ export const useRandomizer = () => {
 
     const startRandimizing = () => {
         setGameWarning(null);
+
         if (activeParticipants.length === 0) {
             setGameWarning("There are no participants in the game");
             return;
@@ -27,6 +30,7 @@ export const useRandomizer = () => {
             setGameWarning("You must select a prize to start the game");
             return;
         }
+        start();
         setRandimizingStarted(true);
     }
 
@@ -44,6 +48,7 @@ export const useRandomizer = () => {
                 setAllRecordsToZero
             });
         }
+        stop();
         setRandimizingStarted(false);
     }
 

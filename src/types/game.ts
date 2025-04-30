@@ -1,6 +1,7 @@
 export type GameType = "major" | "minor";
-export type DataGroup = Array<Record<number, string | number>>;
 
+
+export type DataGroup = Array<Record<number, string | number>>;
 
 
 export interface ParticipantsData {
@@ -11,6 +12,11 @@ export interface ParticipantsData {
 export interface PrizesData {
     major: Array<ActivePrizesData>;
     minor: Array<ActivePrizesData>;
+}
+
+export interface WinnersData {
+    major: Array<ActiveWinnersData>;
+    minor: Array<ActiveWinnersData>;
 }
 
 export interface ActiveParticipantsData {
@@ -29,3 +35,16 @@ export interface ActivePrizesData {
     type: string;
     user_id: string;
 }
+
+
+export interface ActiveWinnersData {
+    company: string;
+    id: string;
+    name: string;
+    prize_list: ActivePrizesData;
+    prize_list_id: string;
+    type: string;
+    user_id: string;
+}
+
+

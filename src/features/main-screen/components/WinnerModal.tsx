@@ -69,9 +69,7 @@ const WinnerModal = ({ isOpen }: { isOpen: boolean }) => {
         <>
             <Modal isOpen={isOpen} className="max-w-sm">
                 <div className="py-5 flex flex-col items-center justify-center gap-5 ">
-
                     <Icon name="Trophy" className="text-yellow-400 h-20 w-20 font-bold" />
-
                     <div className="text-center">
                         <p className="text-gray-800 font-bold">Congratulations,</p>
                         <h1 className="font-bold text-3xl">{selectedWinner?.name}</h1>
@@ -90,11 +88,10 @@ const WinnerModal = ({ isOpen }: { isOpen: boolean }) => {
                             }
                         </button>
 
-                        <button onClick={() => setIsConfirmationModalOpen(true)} className=" text-red-500 border border-red-500 py-3 rounded-lg font-bold inline-flex items-center justify-center mt-2  w-full">
+                        <button onClick={() => setIsConfirmationModalOpen(true)} className=" text-gray-500 border border-gray-200 py-3 rounded-lg font-bold inline-flex items-center justify-center mt-2  w-full">
                             Close
                         </button>
                     </div>
-
                 </div>
             </Modal>
 
@@ -105,7 +102,7 @@ const WinnerModal = ({ isOpen }: { isOpen: boolean }) => {
                             <h1 className="font-bold text-xl">Confirmation</h1>
                             <p className="my-3">Are you sure you want to close with out saving the winner?</p>
                             <div className="flex gap-2 justify-end w-full">
-                                <button onClick={() => setIsConfirmationModalOpen(false)} className=" text-red-500 border border-red-500 py-3 rounded-lg font-bold inline-flex items-center justify-center  px-7">
+                                <button onClick={() => setIsConfirmationModalOpen(false)} className=" text-gray-500 border border-gray-200 py-3 rounded-lg font-bold inline-flex items-center justify-center  px-7">
                                     No
                                 </button>
                                 <button onClick={handleClose} className="bg-cyan-500  text-white py-3 rounded-lg font-bold inline-flex items-center justify-center  px-7">
