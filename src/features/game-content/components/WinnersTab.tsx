@@ -6,7 +6,7 @@ const WinnersTab = () => {
 
 
     return (<>
-        <div className="flex flex-col gap-5 text-white py-5">
+        <div className="flex flex-col gap-5 text-white py-5 overflow-y-scroll max-h-[90vh] ">
             <button onClick={exportToXlsx} className="bg-blue-500 text-white px-4 py-2 rounded disabled:cursor-not-allowed disabled:opacity-50">
                 Export
             </button>
@@ -43,7 +43,7 @@ const RenderWinners = ({ winners, type, fetchLoading }: { winners: GroupedWinner
                         </div>
                     ))
                 ) : (
-                    <p>No winners available</p> // Message if no winners are found
+                    <p>No winners available</p>
                 )
             )}
         </div>

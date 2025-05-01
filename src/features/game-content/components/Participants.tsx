@@ -4,7 +4,7 @@ import { useReadExcel } from "@hooks/useReadExcel";
 
 const Participants = () => {
     const { handleReadExcel, participants, fileName } = useReadExcel();
-    const { activeParticipants, handleBatchInsertParticipants } = useParticipants();
+    const { activeParticipants, handleBatchInsertParticipants, batchInsertLoading } = useParticipants();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,9 +39,9 @@ const Participants = () => {
                 <button
                     onClick={() => handleBatchInsertParticipants(participants)}
                     className="bg-blue-500 text-white px-4 py-2 rounded disabled:cursor-not-allowed disabled:opacity-50"
-                    disabled={participants.length === 0}
+                    disabled={participants.length === 0 || batchInsertLoading}
                 >
-                    Import
+                    {batchInsertLoading ? "Importing..." : "Import"}
                 </button>
             </div>
 

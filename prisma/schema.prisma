@@ -18,9 +18,9 @@ datasource db {
 
 model user {
   id            String       @id @default(cuid())
-  username      String       @unique
+  username      String       
   password      String
-  token         String?       @unique  
+  token         String?      
   created_at    DateTime     @default(now())
   updated_at    DateTime     @default(now()) @updatedAt
 

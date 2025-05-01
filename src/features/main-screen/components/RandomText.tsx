@@ -8,7 +8,7 @@ const RandomText = () => {
 
 
 
-    const { rotatingIndex, startRandimizing, randimizingStarted, stopRandimizing, gameWarning } = useRandomizer();
+    const { rotatingIndex, startRandimizing, randimizingStarted, stopRandimizing, gameWarning, disableStop } = useRandomizer();
     const baseLetters = useMemo(() => ["R", "A", "F", "F", "L", "E"], []);
     const [displayLetters, setDisplayLetters] = useState(baseLetters);
 
@@ -55,7 +55,9 @@ const RandomText = () => {
 
             {
                 randimizingStarted ? (
-                    <button onClick={stopRandimizing} className="bg-red-500 text-white px-7 py-3 rounded-lg font-bold inline-flex items-center gap-2 mt-4">
+                    <button
+                        disabled={disableStop}
+                        onClick={stopRandimizing} className="bg-red-500 text-white px-7 py-3 rounded-lg font-bold inline-flex items-center gap-2 mt-4 disabled:cursor-not-allowed disabled:opacity-50">
                         <Icon name="Pause" />
                         Stop
                     </button>

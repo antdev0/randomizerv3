@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useAppContext } from "@store/AppContext";
 import { ParticipantsService } from "@services/ParticipantsService";
 import { useAuthContext } from "@/store/AuthContext";
@@ -13,23 +14,32 @@ export interface Participant {
 
 export const useParticipants = () => {
     const { user } = useAuthContext();
+    const [batchInsertLoading, setBatchInsertLoading] = useState(false);
     const { activeParticipants, fetchParticipants } = useAppContext();
 
-   
+
 
 
     const handleBatchInsertParticipants = async (participants: Participant[]) => {
-        if (user) {
-            const res = await ParticipantsService.batchInsertParticipants({ userId: user.id, participants })
-            if (res.status === 201) {
-                toast.success("Participants added successfully");
-                fetchParticipants();
+        try {
+            if (user) {
+                setBatchInsertLoading(true);
+                const res = await ParticipantsService.batchInsertParticipants({ userId: user.id, participants })
+                if (res.status === 201) {
+                    toast.success("Participants added successfully");
+                    fetchParticipants();
+                }
             }
+        } catch (error) {
+            toast.error("Failed to add participants");
+            console.error(error);
+        } finally {
+            setBatchInsertLoading(false);
         }
     }
 
 
-    return { activeParticipants, handleBatchInsertParticipants };
+    return { activeParticipants, handleBatchInsertParticipants, batchInsertLoading };
 }
 
 export default useParticipants;

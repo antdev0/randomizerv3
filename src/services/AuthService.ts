@@ -1,4 +1,5 @@
 
+
 import { api } from "./api";
 import { Payload } from "@/types/payload";
 
@@ -19,5 +20,10 @@ export const AuthService = {
         const data = await api.get(`/auth`, { headers: { Authorization: `Bearer ${token}` } });
         return data;
     },
+
+    createUser: async (payload: Payload) => {
+        const data = await api.post(`/users`, payload);
+        return data;
+    }
 
 }
