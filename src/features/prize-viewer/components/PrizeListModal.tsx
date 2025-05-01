@@ -45,7 +45,7 @@ const PrizeListModal = ({ isOpen }: { isOpen: boolean }) => {
                     className=" w-full py-3 unset appearance-none  bg-transparent  border-none outline-none focus:outline-none focus:ring-0 focus:border-none shadow-none" />
             </div>
 
-            <div className="flex flex-col gap-3 mt-2">
+            <div className="flex flex-col gap-3 mt-2 max-h-[70vh] overflow-y-auto">
                 {
                     filteredPrize.length === 0 ? <div className="text-gray-700 text-center">No item found</div> : (
                         filteredPrize.map((prize, index) => (
