@@ -67,7 +67,7 @@ const WinnerModal = ({ isOpen }: { isOpen: boolean }) => {
     return (
 
         <>
-            <Modal isOpen={isOpen} className="max-w-sm">
+            <Modal isOpen={isOpen} clickOutsideToClose={false} className="max-w-sm">
                 <div className="py-5 flex flex-col items-center justify-center gap-5 ">
                     <Icon name="Trophy" className="text-yellow-400 h-20 w-20 font-bold" />
                     <div className="text-center">

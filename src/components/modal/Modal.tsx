@@ -7,17 +7,23 @@ interface ModalProps {
     children: React.ReactNode;
     isOpen: boolean;
     className?: string;
+    clickOutsideToClose?: boolean;
 }
 
-const Modal = ({ children, isOpen, className }: ModalProps) => {
+const Modal = ({ children, isOpen, className, clickOutsideToClose = true }: ModalProps) => {
     const { closeModal } = useModalContext();
 
+    const handleClickOutside = () => {
+        if (clickOutsideToClose) {
+            closeModal();
+        }
+    }
     return (
         <AnimatePresence>
             {isOpen && (
                 <motion.div
                     className="fixed top-0 left-0 h-screen w-screen flex items-center justify-center z-50 p-5 bg-black/50"
-                    onClick={closeModal}
+                    onClick={handleClickOutside}
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
