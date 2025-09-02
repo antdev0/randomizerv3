@@ -44,7 +44,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
                     }
                 }
             }
-          
+
         });
 
         const allWinners = {
@@ -64,9 +64,9 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ userId: string }> }) {
     try {
-        const over_all_chance_to_be_selected = 1;
-        const chance_to_be_selected_in_major = 1;
-        const chance_to_be_selected_in_minor = 1;
+        const over_all_chance_to_be_selected = Number(process.env.OVERALL_CHANCE_TO_BE_SELECTED);
+        const chance_to_be_selected_in_major = Number(process.env.CHANCE_TO_BE_SELECTED_IN_MAJOR);
+        const chance_to_be_selected_in_minor = Number(process.env.CHANCE_TO_BE_SELECTED_IN_MINOR);
 
         const body = await request.json();
         const { userId } = await params;
