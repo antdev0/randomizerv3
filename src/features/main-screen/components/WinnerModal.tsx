@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Modal } from "@components/modal";
-import Icon from "@components/Icon";
 import { useModalContext } from "@store/ModalContext";
 import { ActiveParticipantsData, ActivePrizesData, PrizesData } from "@/types/game";
 import { WinnerService } from "@services/WinnerService";
 import toast from "react-hot-toast";
+import Lottie from "react-lottie";
+import RobotAnimation from "@assets/lottie/robot-animation.json"
 
 interface WinnerModalProps {
     selectedPrize: ActivePrizesData | null;
@@ -16,6 +17,15 @@ interface WinnerModalProps {
 }
 
 const WinnerModal = ({ isOpen }: { isOpen: boolean }) => {
+
+
+    const defaultOptions = {
+        loop: true,
+        autoplay: true,
+        animationData: RobotAnimation,
+
+    };
+
 
     const { closeModal, modalData } = useModalContext();
     const {
@@ -68,15 +78,16 @@ const WinnerModal = ({ isOpen }: { isOpen: boolean }) => {
 
         <>
             <Modal isOpen={isOpen} clickOutsideToClose={false} className="max-w-sm">
-                <div className="py-5 flex flex-col items-center justify-center gap-5 ">
-                    <Icon name="Trophy" className="text-yellow-400 h-20 w-20 font-bold" />
-                    <div className="text-center">
+                <div className="py-5 flex flex-col items-center justify-center  ">
+                    {/* <Icon name="Trophy" className="text-yellow-400 h-20 w-20 font-bold" /> */}
+                    <Lottie options={defaultOptions} width={200} height={200} />
+                    <div className="text-center mb-5">
                         <p className="text-gray-800 font-bold">Congratulations,</p>
-                        <h1 className="font-bold text-3xl">{selectedWinner?.name}</h1>
+                        <h1 className="font-bold text-3xl ">{selectedWinner?.name}</h1>
                         <p className="text-gray-600 text-lg">{selectedWinner?.company}</p>
                     </div>
 
-                    <p className="text-center">For winning <span className="font-bold">{selectedPrize?.name}</span></p>
+                    <p className="text-center mb-5">For winning <span className="font-bold">{selectedPrize?.name}</span></p>
 
                     <div className="flex flex-col w-full">
                         <button
