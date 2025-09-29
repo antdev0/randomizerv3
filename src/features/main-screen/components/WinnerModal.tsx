@@ -76,7 +76,7 @@ const WinnerModal = ({ isOpen }: { isOpen: boolean }) => {
                         <p className="text-gray-600 text-lg">{selectedWinner?.company}</p>
                     </div>
 
-                    <p>For winning <span className="font-bold">{selectedPrize?.name}</span></p>
+                    <p className="text-center">For winning <span className="font-bold">{selectedPrize?.name}</span></p>
 
                     <div className="flex flex-col w-full">
                         <button
