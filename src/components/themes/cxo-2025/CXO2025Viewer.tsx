@@ -13,7 +13,7 @@ const CXO2025Viewer = () => {
             <div className="flex gap-5 items-center  justify-center mb-5">
                 <Image src={VSTECSWhite} alt="VSTECS White Logo" className="w-[13rem] h-[4.5rem]" />
                 <div className="h-[6rem] w-[3px] bg-white"></div>
-                <Image src={CXO2025} alt="ICT Summit Logo" className="w-[16rem] h-[4rem]" />
+                <Image src={CXO2025} alt="ICT Summit Logo" className="w-[16rem] " />
             </div>
 
 
